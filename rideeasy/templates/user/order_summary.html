@@ -1,0 +1,138 @@
+{% extends 'user/home.html' %}
+
+{% block cars %}
+{% endblock cars %}
+
+{% block bodyblock %}
+<div class="container">
+   <h1 style="color: white;">Booking Summary</h1>
+   <div class="row">
+      <!-- cart details  -->
+      <div class="col-8">
+         <hr>
+         <table class="table text-center border">
+            <thead>
+               <tr>
+                  <th scope="col">IMAGE</th>
+                  <th scope="col">NAME</th>
+                  <th scope="col">RENT</th>
+                  <th scope="col">QUANTITY</th>
+                  <th scope="col">TOTAL</th>
+               </tr>
+            </thead>
+            <tbody>
+               {% for car in cars %}
+               <tr>
+                  <th><img src="http://127.0.0.1:8000/dashboard/media/{{car.pid.image}}" alt="" height="50px" width="50px"></th>
+                  <td>{{ car.pid.name }}</td>
+                  <td>&#x20b9; {{ car.pid.rent }}</td>
+                  <td>{{ car.quantity }}</td>
+                  <td>&#x20b9; {% widthratio car.quantity 1 car.pid.rent %}</td>
+               </tr>
+               {% endfor %}
+            </tbody>
+         </table>
+      </div>
+      <!-- total items and price details  -->
+      <div class="col-4 border h-50 p-3">
+         <h1 class="bg-warning"><marquee>Hello, {{ user.username|title }}</marquee></h1>
+         <hr>
+         <h2 style="color: white;">Total Items : {{ total_items }}</h2>
+         <h3 style="color: white;">Total Rent : &#x20b9; <span id="total_rent">{{ total_rent }}</span></h3>
+         <div class="form-check">
+            <input class="form-check-input" type="radio" name="rent_option" id="km_wise" value="km" checked>
+            <label class="form-check-label" for="km_wise">
+            KM Wise
+            </label>
+         </div>
+         <div class="form-check">
+            <input class="form-check-input" type="radio" name="rent_option" id="day_wise" value="day">
+            <label class="form-check-label" for="day_wise">
+            Day Wise
+            </label>
+         </div>
+         <input type="number" id="multiplier" class="form-control mt-2" placeholder="Enter number of kms/days" min="1" value="1">
+         <a href="/cart" class="btn btn-primary w-100 mt-3">Update cart</a>
+         <a id="rzp-button1" class="btn btn-success w-100 mt-3">Make Payment</a>
+      </div>
+   </div>
+</div>
+<style>
+   
+</style>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var originalRent = {{ total_rent }}; // store original total price in INR
+    var kmRate = 10; // rate per kilometer in INR
+    var updatedAmount = originalRent * 100; // Default amount in paise
+
+    var options = {
+        "key": "rzp_test_XRjX6qJ69ajxxs", // Enter the Key ID generated from the Dashboard
+        "amount": updatedAmount, // Default amount in paise
+        "currency": "INR",
+        "name": "car rental Industries",
+        "description": "Ecommerce company",
+        "image": "",
+        "handler": function (response) {
+            console.log(response); // Debugging: log the response
+            alert("Payment successful!"); // Confirm the payment success
+            window.location.replace("/");
+        },
+        "prefill": {
+            "name": "{{ user.first_name }} {{ user.last_name }}",
+            "email": "{{ user.email }}",
+            "contact": "{{ user.profile.contact }}"
+        },
+        "notes": {
+            "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+        console.error(response); // Debugging: log the response
+        alert("Payment failed. Please try again.");
+    });
+
+    function updateTotalRent() {
+        var rentOption = document.querySelector('input[name="rent_option"]:checked').value;
+        var multiplier = document.getElementById('multiplier').value;
+        var newTotalRent;
+
+        if (multiplier && multiplier > 0) {
+            if (rentOption === 'km') {
+                newTotalRent = kmRate * multiplier; // calculate using km rate in INR
+            } else if (rentOption === 'day') {
+                newTotalRent = originalRent * multiplier; // calculate using day rate in INR
+            }
+        } else {
+            newTotalRent = originalRent; // revert to original price in INR
+        }
+
+        console.log("Updated Total Rent: ", newTotalRent); // Debugging: log the updated rent
+        document.getElementById('total_rent').innerText = newTotalRent; // update displayed price in INR
+        updatedAmount = newTotalRent * 100; // update amount for Razorpay in paise
+        console.log("Updated Razorpay Amount: ", updatedAmount); // Debugging: log the updated Razorpay amount
+    }
+
+    document.getElementById('rzp-button1').onclick = function(e) {
+        updateTotalRent(); // Ensure the amount is updated before opening the payment
+        options.amount = updatedAmount; // Set the updated amount in the Razorpay options
+        console.log("Opening Razorpay with amount: ", options.amount); // Debugging: log the amount before opening Razorpay
+        rzp1 = new Razorpay(options); // Reinitialize the Razorpay instance with updated options
+        rzp1.open();
+        e.preventDefault();
+    }
+
+    document.getElementById('multiplier').addEventListener('input', updateTotalRent);
+    document.getElementsByName('rent_option').forEach((elem) => {
+        elem.addEventListener('change', updateTotalRent);
+    });
+});
+</script>
+{% endblock bodyblock %}

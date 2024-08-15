@@ -1,0 +1,99 @@
+<div class="container mt-2">
+   <div class="row">
+       <div class="col-4"></div>
+       <div class="col-4">
+           <form class="d-flex" role="search" method="POST" action="/search/">
+               {% csrf_token %}
+               <input class="form-control me-2 search-input" type="search" placeholder="Car Name" aria-label="Search" name="car_name">
+               <button class="btn btn-success search-button" type="submit">Search</button>
+           </form>
+       </div>
+       <div class="col-4"></div>
+   </div>
+</div>
+
+<div class="container mt-3">
+   {% if messages %}
+   {% for message in messages %}
+   {% if message.tags == 'error' %}
+   <div class="alert alert-danger alert-dismissible fade show" role="alert">
+       {{message}}
+       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+   </div>
+   {% else %}
+   <div class="alert alert-success alert-dismissible fade show" role="alert">
+       {{message}}
+       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+   </div>
+   {% endif %}
+   {% endfor %}
+   {% endif %}
+
+   <div class="row gy-3">
+       {% for car in cars %}
+       <div class="col-lg-3 col-md-6 col-sm-12 h-100 ">
+           <div class="card custom-card" style="width: 16rem;">
+               <img src="http://127.0.0.1:8000/dashboard/media/{{car.image}}" class="card-img-top custom-card-img" alt="...">
+               <div class="card-body">
+                   <h5 class="card-title">{{car.name}}</h5>
+                   <h6 class="card-title">&#x20b9; {{car.rent}}/day</h6>
+                   <p class="card-text">{{car.description}}</p>
+                   <div class="d-flex justify-content-between">
+                       <a href="/add-to-cart/{{car.id}}" class="btn btn-warning">Add to cart</a>
+                       <a href="/order-summary" class="btn btn-info ">Book</a>
+                   </div>
+               </div>
+           </div>
+       </div>
+       {% endfor %}
+   </div>
+</div>
+
+<style>
+   .custom-card {
+       transition: transform 0.2s ease-in-out, box-shadow 0.2s ease ;
+   }
+
+   .custom-card:hover {
+       transform: translateY(-10px);
+       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+   }
+
+   .custom-card-img {
+       height: 200px;
+       object-fit: cover;
+   }
+
+   .search-input {
+       position: relative;
+       border: 2px solid transparent;
+       padding: 8px 12px;
+       border-radius: 4px;
+       outline: none;
+       animation: borderAnimation 3s linear infinite;
+   }
+
+   @keyframes borderAnimation {
+       0% {
+           border-color: #ff6a00;
+       }
+       16% {
+           border-color: #ff0099;
+       }
+       32% {
+           border-color: #00ff00;
+       }
+       48% {
+           border-color: #00ffff;
+       }
+       64% {
+           border-color: #0099ff;
+       }
+       80% {
+           border-color: #ff00ff;
+       }
+       100% {
+           border-color: #ff6a00;
+       }
+   }
+</style>

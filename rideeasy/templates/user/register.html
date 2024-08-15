@@ -1,0 +1,148 @@
+{% extends 'user/home.html' %}
+{% block bodyblock %}
+
+<style>
+    /* Ensure that body and html take up full height */
+    html, body {
+        height: 100%;
+        margin: 0;
+        position: relative;
+    }
+
+    /* Set the background image */
+    body {
+        background-image: url(/static/images/log3.jpg); /* Replace with your background image URL */
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Ensure navbar is positioned correctly and has a higher z-index */
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000; /* Ensure navbar is on top */
+    }
+
+    .search-bar {
+        position: fixed;
+        top: 60px; /* Adjust based on the height of your navbar */
+        left: 0;
+        width: 100%;
+        z-index: 1000; /* Ensure search bar is on top */
+    }
+
+    /* Position the container for the registration card */
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 60px); /* Adjust based on the height of your navbar */
+        padding: 20px;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1; /* Ensure container is below the navbar */
+    }
+
+    .card {
+        width: 30rem;
+        padding: 20px;
+        border: 2px solid #ff5733; /* Colorful border for the card */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, border 0.3s ease;
+        border-radius: 15px;
+        background: transparent; /* Transparent background for the card container */
+    }
+
+    .card:hover {
+        transform: perspective(1000px) rotateY(10deg);
+    }
+
+    .card-body {
+        background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background for the card body */
+        border-radius: 10px;
+        padding: 20px; /* Ensure padding inside the card body */
+    }
+
+    .form-label {
+        color: #000; /* Adjust text color if needed */
+    }
+
+    .form-control {
+        border-radius: 20px;
+        border: 2px solid #ccc; /* Border color for input fields */
+    }
+
+    .btn-primary {
+        border-radius: 20px;
+        background-color: #ff5733; /* Button background color */
+        border: 2px solid #ff5733; /* Button border color */
+    }
+
+    .btn-primary:hover {
+        background-color: #e74c3c; /* Button hover background color */
+        border-color: #e74c3c; /* Button hover border color */
+    }
+
+    .alert {
+        border-radius: 20px;
+    }
+
+    .btn-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+    }
+</style>
+
+<div class="navbar"> <!-- Example Navbar -->
+    <!-- Your navbar content here -->
+</div>
+
+<div class="search-bar"> <!-- Example Search Bar -->
+    <!-- Your search bar content here -->
+</div>
+
+<div class="register-container">
+    <div class="card p-0"> <!-- Removed padding from the card itself -->
+        <div class="card-body">
+            <h1 class="text-center"><marquee><i>SignUp</i></marquee></h1>
+            <form method="POST">
+                {% if error_msg %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error_msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="username" class="form-label"><i class="bi bi-person"></i>Username</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label"><i class="bi bi-lock"></i>
+                        Password</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <div class="mb-3">
+                    <label for="cpassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="cpassword" name="cpassword">
+                </div>
+                <div class="mb-3">
+                    <label for="type" class="form-label">Register me as</label>
+                    <select class="form-select" aria-label="Default select example" id="type" name="type">
+                        <option value="user">User</option>
+                        <option value="seller">Owner</option>
+                    </select>
+                </div>
+                <input type="submit" class="btn btn-primary w-100" value="Register">
+                <p class="text-center mt-2">Already have an account? <a href="/login">login</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock bodyblock %}

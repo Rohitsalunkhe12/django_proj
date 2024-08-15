@@ -1,0 +1,105 @@
+{% extends 'user/home.html' %}
+   {% block cars %}
+   {% endblock cars %}
+
+{% block bodyblock %}
+
+<style>
+   .img {
+      height: 200px;
+      width: 200px;
+      transition: transform 0.2s ease-in-out;
+   }
+   
+   .img:hover {
+      transform: scale(1.1);
+   }
+   
+   .car-details {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      transition: background-color 0.3s ease-in-out, box-shadow 0.1s ease-in-out;
+   }
+   
+   .car-details:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+   }
+   
+   .color {
+      color: white;
+   }
+   
+   .btn {
+      margin-right: 5px;
+   }
+   
+   .total-details {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+   }
+   
+   .total-details:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.3);
+   }
+   
+   h1, h2, h3 {
+      color: white;
+   }
+   
+   
+</style>
+
+<div class="container">
+   <h1><span style="color: red;">Cars</span> Details</h1>
+   <div class="row">
+      <!-- cart details  -->
+      <div class="col-8">
+         <hr>
+         
+         {% for car in cars %}  
+         <div class="row car-details">
+            <!-- display image  -->
+            <div class="col-4">
+               <img src="http://127.0.0.1:8000/dashboard/media/{{car.pid.image}}" class="img">
+            </div>
+            <!-- display product details  -->
+            <div class="col-8 mb-3">
+               <div class="color">
+               <h1>{{car.pid.name}}</h1>
+               <p>{{car.pid.description}}</p>
+               <p>&#x20b9; {{car.pid.rent}}</p>
+               
+               </div>
+               <a href="/cart/dec/{{car.id}}" class="btn btn-danger">-</a>
+               <input type="number" value="{{car.quantity}}" class="text-center" disabled>
+               <a href="/cart/inc/{{car.id}}" class="btn btn-success">+</a>
+               <a href="/delete/{{car.id}}" class="btn btn-danger">delete</a>
+            </div>
+         </div>
+         <hr>
+         {% endfor %}
+         
+      </div>
+
+      <!-- total items and price details  -->
+      <div class="col-4 border h-50 p-3">
+         <div class="total-details">
+            <h1><marquee style="background-color: yellow ;color: black;">Hello, {{user.username|title}}</marquee></h1>
+            <hr>
+            <h2>Total Items: {{total_items}}</h2>
+            <h3>Total Rent: &#x20b9; {{total_rent}}</h3>
+            
+            <a href="/order-summary" class="btn btn-primary w-100">Booking</a>
+         </div>
+      </div>
+   </div>
+</div>
+
+{% endblock bodyblock %}
